@@ -16,8 +16,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Read version from package.json
-      id: get_version
-      run: echo "::set-output name=version::$(jq -r '.version' package.json)
+        id: get_version
+        run: echo "::set-output name=version::$(jq -r '.version' package.json)
 
       - name: Extract commit message
         id: extract_commit_message
