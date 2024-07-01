@@ -17,7 +17,7 @@ jobs:
 
       - name: Read version from package.json
         id: get_version
-        run: echo "::set-output name=version::$(jq -r '.version' package.json)
+        run: echo "::set-output name=version::$(jq -r '.version' ./package.json)
 
       - name: Extract commit message
         id: extract_commit_message
