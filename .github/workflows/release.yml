@@ -1,12 +1,13 @@
-on:
-  push:
-    branches:
-      - master
+name: Create Release on QA to Master Merge
 
-name: Create Release on Merge to Master
+on:
+  pull_request:
+    types:
+      - closed
 
 jobs:
   create_release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -14,7 +15,7 @@ jobs:
 
       - name: Extract commit message
         id: extract_commit_message
-        run: echo "::set-output name=message::$(git log --format=%B -n 1 ${{ github.sha }})"
+        run: echo "::set-output name=message::$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})"
 
       - name: Create Release
         id: create_release
@@ -22,7 +23,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: ${{ github.sha }}
           release_name: ${{ steps.extract_commit_message.outputs.message }}
           body: ${{ steps.extract_commit_message.outputs.message }}
           draft: false
