@@ -15,6 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Read version from package.json
+      id: get_version
+      run: echo "::set-output name=version::$(jq -r '.version' package.json)
+
       - name: Extract commit message
         id: extract_commit_message
         run: echo "::set-output name=message::$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})"
@@ -25,8 +29,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          release_name: ${{ steps.extract_commit_message.outputs.message }}
+          tag_name: Release_${{ steps.get_version.outputs.version }}
+          release_name: Release ${{ steps.get_version.outputs.version }}
           body: ${{ steps.extract_commit_message.outputs.message }}
           draft: false
           prerelease: false
