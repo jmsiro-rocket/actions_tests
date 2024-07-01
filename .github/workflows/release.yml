@@ -17,11 +17,11 @@ jobs:
 
       - name: Read version from package.json
         id: get_version
-        run: echo "version=$(jq -r '.version' package.json)" >> $VERSION
+        run: echo "VERSION=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
 
       - name: Extract commit message
         id: extract_commit_message
-        run: echo "message=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})" >> $MESSAGE
+        run: echo "MESSAGE=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }})" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
         id: create_release
@@ -29,8 +29,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: Release_$VERSION
-          release_name: Release $VERSION
-          body: $MESSAGE
+          tag_name: Release_${{ steps.get_version.outputs.VERSION }}
+          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: ${{ steps.extract_commit_message.outputs.MESSAGE }}
           draft: false
           prerelease: false
